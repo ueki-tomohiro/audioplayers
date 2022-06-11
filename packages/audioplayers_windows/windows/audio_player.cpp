@@ -24,7 +24,7 @@ AudioPlayer::AudioPlayer(std::string playerId, flutter::MethodChannel<flutter::E
     auto onSeekCompletedCB = std::bind(&AudioPlayer::OnSeekCompleted, this);
 
     // Create and initialize the MediaEngineWrapper which manages media playback
-    m_mediaEngineWrapper = winrt::make_self<media::MediaEngineWrapper>(nullptr, onError, onBufferingStateChanged, onPlaybackEndedCB, onTimeUpdateCB, onSeekCompletedCB);
+    m_mediaEngineWrapper = Microsoft::WRL::Make<media::MediaEngineWrapper>(nullptr, onError, onBufferingStateChanged, onPlaybackEndedCB, onTimeUpdateCB, onSeekCompletedCB);
 
     m_mediaEngineWrapper->Initialize();
 }
