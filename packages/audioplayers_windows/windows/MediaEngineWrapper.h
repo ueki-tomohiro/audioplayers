@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include <wrl/implements.h>
 
 #include "MediaFoundationHelpers.h"
 #include "MediaEngineExtension.h"

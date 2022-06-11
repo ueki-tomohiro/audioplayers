@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wrl/implements.h>
+
 namespace media
 {
 
@@ -74,7 +76,7 @@ class SyncMFCallback
     IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* result) noexcept 
     try
     {
-        m_result.attach(result);
+        m_result = wil::com_copy<IMFAsyncResult>(result);
         m_invokeEvent.SetEvent();
         return S_OK;
     }

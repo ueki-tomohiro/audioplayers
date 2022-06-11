@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wrl/implements.h>
+
 namespace media
 {
 

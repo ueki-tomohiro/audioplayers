@@ -1,7 +1,6 @@
 #include <windows.h>
 
 // Include prior to C++/WinRT Headers
-#include <wrl/implements.h>
 #include <wil/cppwinrt.h>
 
 // Windows Implementation Library
@@ -297,7 +296,7 @@ void MediaEngineWrapper::CreateMediaEngine() {
     m_platformRef.Startup();
 
     THROW_IF_FAILED(MFCreateAttributes(creationAttributes.put(), 7));
-    m_callbackHelper = wil::make<MediaEngineCallbackHelper>([&]() { this->OnLoaded(); },
+    m_callbackHelper = Microsoft::WRL::Make<MediaEngineCallbackHelper>([&]() { this->OnLoaded(); },
                                                        [&](MF_MEDIA_ENGINE_ERR error, HRESULT hr) { this->OnError(error, hr); },
                                                        [&](BufferingState state) { this->OnBufferingStateChange(state); },
                                                        [&]() { this->OnPlaybackEnded(); }, [&]() { this->OnTimeUpdate(); },
@@ -307,7 +306,7 @@ void MediaEngineWrapper::CreateMediaEngine() {
     THROW_IF_FAILED(creationAttributes->SetGUID(MF_MEDIA_ENGINE_BROWSER_COMPATIBILITY_MODE, MF_MEDIA_ENGINE_BROWSER_COMPATIBILITY_MODE_IE_EDGE));
     THROW_IF_FAILED(creationAttributes->SetUINT32(MF_MEDIA_ENGINE_AUDIO_CATEGORY, AudioCategory_Media));
 
-    m_mediaEngineExtension = wil::make_self<MediaEngineExtension>();
+    m_mediaEngineExtension = Microsoft::WRL::Make<MediaEngineExtension>();
     THROW_IF_FAILED(creationAttributes->SetUnknown(MF_MEDIA_ENGINE_EXTENSION, m_mediaEngineExtension.get()));
 
     THROW_IF_FAILED(CoCreateInstance(CLSID_MFMediaEngineClassFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(classFactory.put())));
@@ -320,7 +319,7 @@ void MediaEngineWrapper::SetMediaSource(IMFMediaSource* mediaSource) {
     THROW_IF_FAILED(mediaSource->QueryInterface(IID_PPV_ARGS(sourceUnknown.put())));
     m_mediaEngineExtension->SetMediaSource(sourceUnknown.get());
 
-    wil::com_ptr<IMFMediaEngineEx> mediaEngineEx = m_mediaEngine.as<IMFMediaEngineEx>();
+    wil::com_ptr<IMFMediaEngineEx> mediaEngineEx = m_mediaEngine.try_query<IMFMediaEngineEx>();
     wil::unique_bstr source = wil::make_bstr(L"customSrc");
     THROW_IF_FAILED(mediaEngineEx->SetSource(source.get()));
 }
