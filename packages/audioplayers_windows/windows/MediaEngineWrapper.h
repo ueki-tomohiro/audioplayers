@@ -12,7 +12,7 @@ namespace media
 // MediaEngine.
 // - It uses the provided IMFMediaSource to feed media samples into the
 //   MediaEngine pipeline.
-class MediaEngineWrapper : public winrt::implements<MediaEngineWrapper, IUnknown>
+class MediaEngineWrapper : public Microsoft::WRL::RuntimeClass<MediaEngineWrapper, IUnknown>
 {
   public:
     using ErrorCB = std::function<void(MF_MEDIA_ENGINE_ERR,HRESULT)>;
@@ -67,9 +67,9 @@ class MediaEngineWrapper : public winrt::implements<MediaEngineWrapper, IUnknown
     std::function<void()> m_timeUpdateCB;
     std::function<void()> m_seekCompletedCB;
     MFPlatformRef m_platformRef;
-    winrt::com_ptr<IMFMediaEngine> m_mediaEngine;
-    winrt::com_ptr<MediaEngineExtension> m_mediaEngineExtension;
-    winrt::com_ptr<IMFMediaEngineNotify> m_callbackHelper;
+    wil::com_ptr<IMFMediaEngine> m_mediaEngine;
+    wil::com_ptr<MediaEngineExtension> m_mediaEngineExtension;
+    wil::com_ptr<IMFMediaEngineNotify> m_callbackHelper;
     void CreateMediaEngine();
     void OnLoaded();
     void OnError(MF_MEDIA_ENGINE_ERR error, HRESULT hr);

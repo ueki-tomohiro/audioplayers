@@ -11,8 +11,9 @@
 #include <shobjidl.h> 
 
 #include <unknwn.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include "winrt/Windows.System.h"
+#include <Windows.Foundation.Collections.h>
+#include "Windows.System.h"
+#include <wrl/implements.h>
 
 #include <map>
 #include <memory>
@@ -27,6 +28,7 @@
 #include <wil/cppwinrt.h>
 
 // Windows Implementation Library
+#include <wil/com.h>
 #include <wil/resource.h>
 #include <wil/result_macros.h>
 
@@ -49,8 +51,6 @@
 #include <sstream>
 #include <string>
 #include <wincodec.h>
-
-using namespace winrt;
 
 class AudioPlayer {
 
@@ -78,7 +78,7 @@ private:
 
     // Media members
     media::MFPlatformRef m_mfPlatform;
-    winrt::com_ptr<media::MediaEngineWrapper> m_mediaEngineWrapper;
+    wil::com_ptr<media::MediaEngineWrapper> m_mediaEngineWrapper;
 
     bool _isInitialized = false;
     std::string _url{};

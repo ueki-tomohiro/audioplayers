@@ -25,7 +25,8 @@ dependencies:
   audioplayers_darwin: ^1.0.0-rc.4
   audioplayers_linux: ^1.0.0-rc.3
   audioplayers_web: ^1.0.0-rc.3
-  audioplayers_windows: ^1.0.0-rc.3
+  audioplayers_windows:
+    path: ../audioplayers_windows
   uuid: ^3.0.1
   path_provider: ^2.0.1
   http: ^0.13.1

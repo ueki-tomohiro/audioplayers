@@ -6,7 +6,7 @@ namespace media
 // This implementation of IMFMediaEngineExtension is used to integrate a custom
 // IMFMediaSource with the MediaEngine pipeline
 class MediaEngineExtension
-    : public winrt::implements<MediaEngineExtension, IMFMediaEngineExtension>
+    : public Microsoft::WRL::RuntimeClass<MediaEngineExtension, IMFMediaEngineExtension>
 {
   public:
     MediaEngineExtension() = default;
@@ -35,7 +35,7 @@ class MediaEngineExtension
     };
     ExtensionUriType m_uriType = ExtensionUriType::Unknown;
     bool m_hasShutdown = false;
-    winrt::com_ptr<IUnknown> m_mfMediaSource;
+    wil::com_ptr<IUnknown> m_mfMediaSource;
 };
 
 } // namespace media

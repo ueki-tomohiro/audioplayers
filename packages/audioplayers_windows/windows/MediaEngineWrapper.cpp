@@ -1,9 +1,11 @@
 #include <windows.h>
 
 // Include prior to C++/WinRT Headers
+#include <wrl/implements.h>
 #include <wil/cppwinrt.h>
 
 // Windows Implementation Library
+#include <wil/com.h>
 #include <wil/resource.h>
 #include <wil/result_macros.h>
 
@@ -28,7 +30,7 @@ namespace media
 namespace
 {
     class MediaEngineCallbackHelper
-        : public winrt::implements<MediaEngineCallbackHelper, IMFMediaEngineNotify>
+        : public RuntimeClass<MediaEngineCallbackHelper, IMFMediaEngineNotify>
     {
       public:
         MediaEngineCallbackHelper(std::function<void()> onLoadedCB, MediaEngineWrapper::ErrorCB errorCB,
@@ -273,7 +275,7 @@ std::vector<std::tuple<uint64_t, uint64_t>> MediaEngineWrapper::GetBufferedRange
             return;
         }
 
-        winrt::com_ptr<IMFMediaTimeRange> mediaTimeRange;
+        wil::com_ptr<IMFMediaTimeRange> mediaTimeRange;
         THROW_IF_FAILED(m_mediaEngine->GetBuffered(mediaTimeRange.put()));
 
         double start;
@@ -291,13 +293,13 @@ std::vector<std::tuple<uint64_t, uint64_t>> MediaEngineWrapper::GetBufferedRange
 // Internal methods
 
 void MediaEngineWrapper::CreateMediaEngine() {
-    winrt::com_ptr<IMFMediaEngineClassFactory> classFactory;
-    winrt::com_ptr<IMFAttributes> creationAttributes;
+    wil::com_ptr<IMFMediaEngineClassFactory> classFactory;
+    wil::com_ptr<IMFAttributes> creationAttributes;
 
     m_platformRef.Startup();
 
     THROW_IF_FAILED(MFCreateAttributes(creationAttributes.put(), 7));
-    m_callbackHelper = winrt::make<MediaEngineCallbackHelper>([&]() { this->OnLoaded(); },
+    m_callbackHelper = wil::make<MediaEngineCallbackHelper>([&]() { this->OnLoaded(); },
                                                        [&](MF_MEDIA_ENGINE_ERR error, HRESULT hr) { this->OnError(error, hr); },
                                                        [&](BufferingState state) { this->OnBufferingStateChange(state); },
                                                        [&]() { this->OnPlaybackEnded(); }, [&]() { this->OnTimeUpdate(); },
@@ -307,7 +309,7 @@ void MediaEngineWrapper::CreateMediaEngine() {
     THROW_IF_FAILED(creationAttributes->SetGUID(MF_MEDIA_ENGINE_BROWSER_COMPATIBILITY_MODE, MF_MEDIA_ENGINE_BROWSER_COMPATIBILITY_MODE_IE_EDGE));
     THROW_IF_FAILED(creationAttributes->SetUINT32(MF_MEDIA_ENGINE_AUDIO_CATEGORY, AudioCategory_Media));
 
-    m_mediaEngineExtension = winrt::make_self<MediaEngineExtension>();
+    m_mediaEngineExtension = wil::make_self<MediaEngineExtension>();
     THROW_IF_FAILED(creationAttributes->SetUnknown(MF_MEDIA_ENGINE_EXTENSION, m_mediaEngineExtension.get()));
 
     THROW_IF_FAILED(CoCreateInstance(CLSID_MFMediaEngineClassFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(classFactory.put())));
@@ -316,11 +318,11 @@ void MediaEngineWrapper::CreateMediaEngine() {
 }
 
 void MediaEngineWrapper::SetMediaSource(IMFMediaSource* mediaSource) {
-    winrt::com_ptr<IUnknown> sourceUnknown;
+    wil::com_ptr<IUnknown> sourceUnknown;
     THROW_IF_FAILED(mediaSource->QueryInterface(IID_PPV_ARGS(sourceUnknown.put())));
     m_mediaEngineExtension->SetMediaSource(sourceUnknown.get());
 
-    winrt::com_ptr<IMFMediaEngineEx> mediaEngineEx = m_mediaEngine.as<IMFMediaEngineEx>();
+    wil::com_ptr<IMFMediaEngineEx> mediaEngineEx = m_mediaEngine.as<IMFMediaEngineEx>();
     wil::unique_bstr source = wil::make_bstr(L"customSrc");
     THROW_IF_FAILED(mediaEngineEx->SetSource(source.get()));
 }

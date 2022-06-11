@@ -32,7 +32,7 @@ class MFPlatformRef
     bool m_started = false;
 };
 
-class MFCallbackBase : public winrt::implements<MFCallbackBase, IMFAsyncCallback>
+class MFCallbackBase : public Microsoft::WRL::RuntimeClass<MFCallbackBase, IMFAsyncCallback>
 {
   public:
     MFCallbackBase(DWORD flags = 0, DWORD queue = MFASYNC_CALLBACK_QUEUE_MULTITHREADED) : m_flags(flags), m_queue(queue) {}
@@ -71,10 +71,10 @@ class SyncMFCallback
 
     // IMFAsyncCallback methods
 
-    IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* result) noexcept override
+    IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* result) noexcept 
     try
     {
-        m_result.copy_from(result);
+        m_result.attach(result);
         m_invokeEvent.SetEvent();
         return S_OK;
     }
@@ -82,7 +82,7 @@ class SyncMFCallback
 
   private:
     wil::unique_event m_invokeEvent;
-    winrt::com_ptr<IMFAsyncResult> m_result;
+    wil::com_ptr<IMFAsyncResult> m_result;
 };
 
 class MFWorkItem : public MFCallbackBase
@@ -109,7 +109,7 @@ private:
 
 inline void MFPutWorkItem(std::function<void()> callback)
 {
-    winrt::com_ptr<MFWorkItem> workItem = winrt::make_self<MFWorkItem>(callback);
+    wil::com_ptr<MFWorkItem> workItem = wil::com_copy<MFWorkItem>(callback);
     THROW_IF_FAILED(MFPutWorkItem2(workItem->GetQueue(), 0, workItem.get(), nullptr));
 }
 

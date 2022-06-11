@@ -11,8 +11,6 @@
 
 #undef GetCurrentTime
 
-using namespace winrt;
-
 AudioPlayer::AudioPlayer(std::string playerId, flutter::MethodChannel<flutter::EncodableValue>* channel) :
     _playerId(playerId), _channel(channel)
 {
@@ -37,12 +35,12 @@ void AudioPlayer::SetSourceUrl(std::string url) {
         // Create a source resolver to create an IMFMediaSource for the content URL.
         // This will create an instance of an inbuilt OS media source for playback.
         // An application can skip this step and instantiate a custom IMFMediaSource implementation instead.
-        winrt::com_ptr<IMFSourceResolver> sourceResolver;
+        wil::com_ptr<IMFSourceResolver> sourceResolver;
         THROW_IF_FAILED(MFCreateSourceResolver(sourceResolver.put()));
         constexpr uint32_t sourceResolutionFlags = MF_RESOLUTION_MEDIASOURCE | MF_RESOLUTION_READ;
         MF_OBJECT_TYPE objectType = {};
         
-        winrt::com_ptr<IMFMediaSource> mediaSource;
+        wil::com_ptr<IMFMediaSource> mediaSource;
         THROW_IF_FAILED(sourceResolver->CreateObjectFromURL(winrt::to_hstring(url).c_str(), sourceResolutionFlags, nullptr, &objectType, reinterpret_cast<IUnknown**>(mediaSource.put_void())));
 
         _isInitialized = false;

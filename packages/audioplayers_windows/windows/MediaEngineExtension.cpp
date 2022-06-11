@@ -2,6 +2,7 @@
 #include <wil/cppwinrt.h>
 
 // Windows Implementation Library
+#include <wil/com.h>
 #include <wil/resource.h>
 #include <wil/result_macros.h>
 
@@ -39,7 +40,7 @@ try
     {
         *cancelCookie = nullptr;
     }
-    winrt::com_ptr<IUnknown> localSource;
+    wil::com_ptr<IUnknown> localSource;
     {
         auto lock = m_lock.lock();
         THROW_HR_IF(MF_E_SHUTDOWN, m_hasShutdown);
@@ -48,7 +49,7 @@ try
 
     if(type == MF_OBJECT_MEDIASOURCE && localSource != nullptr)
     {
-        winrt::com_ptr<IMFAsyncResult> asyncResult;
+        wil::com_ptr<IMFAsyncResult> asyncResult;
         THROW_IF_FAILED(MFCreateAsyncResult(localSource.get(), callback, state, asyncResult.put()));
         THROW_IF_FAILED(asyncResult->SetStatus(S_OK));
         m_uriType = ExtensionUriType::CustomSource;
