@@ -95,7 +95,7 @@ public:
 
     // IMFAsyncCallback methods
 
-    IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* /*result*/) noexcept override
+    IFACEMETHODIMP Invoke(_In_opt_ IMFAsyncResult* /*result*/) noexcept
     try
     {
         m_callback();

@@ -22,15 +22,13 @@
 #include "MediaFoundationHelpers.h"
 #include <Audioclient.h>
 
-using namespace Microsoft::WRL;
-
 namespace media
 {
 
 namespace
 {
     class MediaEngineCallbackHelper
-        : public RuntimeClass<MediaEngineCallbackHelper, IMFMediaEngineNotify>
+        : public  Microsoft::WRL::RuntimeClass<MediaEngineCallbackHelper, IMFMediaEngineNotify>
     {
       public:
         MediaEngineCallbackHelper(std::function<void()> onLoadedCB, MediaEngineWrapper::ErrorCB errorCB,
